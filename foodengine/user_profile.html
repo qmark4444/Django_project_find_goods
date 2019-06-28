@@ -1,0 +1,71 @@
+{% extends "foodengine/base_layout.html" %}
+
+{% block app_title %} 
+	MyProfile
+{% endblock %} 
+
+{% block app_side_block %}	
+	<h4>[My Profile]</h4>
+	<p>UserName: {{user.get_username}}</p>
+	<p>Full Name: {{user.get_full_name}}</p>
+	<p>Email: {{user.email}}</p>
+	<p>Prime Member: 
+	{% if not user.isMember %}
+		No
+	{% else %}
+		Yes
+	{% endif %}
+	</p>
+	<p>Address: {{user.address}}</p>
+	
+	<div>
+	{% if not user.isMember %}
+		<button>Apply for Prime Member</button>
+	{% endif %}
+	
+	{% if user.isMember %}
+		<p>
+			<a href="{% url 'member' %}">Go To Member Area</a>
+		</p>		
+	{% endif %}
+	</div>
+	
+{% endblock %}
+
+{% block app_body_block %}
+	<p style="font-weight:bold">My Last Search:</p><br>
+	
+	{% if favorites %}	
+   		<div class="row" style="height:400px;width:900px;overflow:auto;">
+	        <table class="table table-bordered table-hover table-sm table-responsive">
+				 <thead class="thead-default" style="background-color: powderblue;">
+					<tr>
+						<th>Name
+						</th>
+						<th>Brand
+						</th>
+						<th>Store
+						</th>
+						<th>Location
+						</th>
+						<th>Country
+						</th>
+						<th>Price
+						</th>
+					</tr>
+				 </thead>
+				 {% for product in favorites %} 
+		        	<tr>
+	        			<td>{{product.name}}</td>
+	        			<td>{{product.brand}}</td>
+	        			<td>{{product.store}}</td>
+	        			<td>{{product.store_location}}</td>
+	        			<td>{{product.country_origin}}</td>
+	        			<td>{{product.price}}</td>
+	        		</tr>
+        		{% endfor %}
+	        </table>
+		</div>	   	
+	{% else %}
+	{% endif %}	   	
+{% endblock %}

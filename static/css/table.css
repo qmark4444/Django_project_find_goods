@@ -1,0 +1,10 @@
+.result_table table{
+	border: 1px solid black;
+}
+
+.result_table th, td{
+	border: 1px solid black;
+	width: 100px;
+	white-space: nowrap;
+}
+

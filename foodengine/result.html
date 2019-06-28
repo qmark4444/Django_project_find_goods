@@ -1,0 +1,164 @@
+{% extends "foodengine/base_layout.html" %}
+
+
+{% block app_side_block %}
+<form id="refinesearch" method="get" action="{% url 'refineSearch' %}">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<label>Filter by brand</label>
+			<select class="form-control" name="brand">
+				<option></option>
+				{% for item in allBrands %}
+				<option value="{{ item }}" {% if filter.brand == item %}selected="selected"{% endif %}>{{ item }}
+				{% endfor %}
+			</select>
+		</div>
+	</div><br>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<label>Filter by country</label>
+			<select class="form-control" name="country">
+				<option></option>
+				{% for item in allCountries %}
+				<option value="{{ item }}" {% if filter.country == item %}selected="selected"{% endif %}>{{ item }}
+				{% endfor %}
+			</select>
+		</div>
+	</div><br>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<label>Product</label>
+    		<input type="text" class="form-control" placeholder="product name" name="product_name" value="{{ filter.prodName|default_if_none:'' }}">
+    	</div>
+  	</div><br>
+    <button type="submit">Refine Search</button>
+</form>
+	  
+{% endblock %}
+
+{% block app_body_block %}
+	<div class="col-lg-12" style="padding-bottom:10px;">
+	{% if user.is_authenticated %}
+        <button onclick="saveFavorites({{user.id}})">Save My Search</button><br>
+        {% if saveFavorite_message %} 
+        	<span style="font-weight:bold;">
+        		{{saveFavorite_message}}
+        	</span>
+        {% endif %}
+    {% endif %}
+	</div>
+	
+	{% if products %} <!--  always check existence before invoking  -->	
+	<div class="col-lg-12"  style="padding-bottom:10px;padding-left:0px;margin-left:0px;">
+		<span class="col-lg-5" style="padding-left:0px;padding-top:10px;text-align:left;">
+			* from current location: {{currentLocation}}
+		</span>
+		<form class="col-lg-7" style="padding:0px;margin:0px;" id="locationForm" method="post" action="{% url 'changeLocation' %}">
+			{% csrf_token %}
+		   	{{ form }}
+			<div class="input-group">
+		   		<input type="text" size="40" class="form-control" placeholder="My Location: StreetNumber SteetName, City, Province" name="new_location" value="">
+		   		<span class="input-group-btn">
+        			<button type="submit" class="btn" style="background-color:lightblue;color:white;">Update</button>
+      			</span>
+		   	</div>
+		</form>
+	</div>
+	
+	<div class="row" style="height:400px;width:1000px;overflow:auto;">
+        <table class="table table-bordered table-hover table-sm table-responsive" >
+			 <thead class="thead-default" style="background-color: powderblue;">
+				<tr>
+					<th>Name
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-bottom"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('name', 'desc')">
+						</button>
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-top"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('name', 'asc')">
+						</button>
+					</th>
+					<th>Brand
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-bottom"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('brand', 'desc')">
+						</button>
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-top"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('brand', 'asc')">
+						</button>
+					</th>
+					<th>Store
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-bottom"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('store', 'desc')">
+						</button>
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-top"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('store', 'asc')">
+						</button>
+					</th>
+					<th>Location
+					</th>
+					<th>Distance*
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-bottom"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('distance', 'desc')">
+						</button>
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-top"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('distance', 'asc')">
+						</button>
+					</th>
+					<th>Country
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-bottom"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('country_origin', 'desc')">
+						</button>
+						<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-top"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('country_origin', 'asc')">
+						</button>
+					</th>
+					<th>Photo
+					</th>
+					{% if user.is_authenticated %}
+						<th>Price
+							<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-bottom"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('price', 'desc')">
+							</button>
+							<button type="button" class="btn btn-xs glyphicon glyphicon-triangle-top"
+								style="background-color: powderblue; color: grey; float: right;"
+								onclick="sort('price', 'asc')">
+							</button>
+						</th>
+					{% endif %}
+				</tr>
+			 </thead>
+			 <tbody>
+        		{% for product in products %} 
+        		<tr>
+        			<td>{{product.name}}</td>
+        			<td>{{product.brand}}</td>
+        			<td>{{product.store}}</td>
+        			<td>{{product.store_location}}</td>
+        			<td>{{product.distance}}</td>
+        			<td>{{product.country_origin}}</td>
+        			<td><img style="display:block;width:100%;" src="../static/images/{{product.prodNum}}.jpg"></td>
+        			{% if user.is_authenticated %}
+        				<td>{{product.price}}</td>
+        			{% endif %}
+        		</tr>
+        		{% endfor %}
+        	</tbody>
+        </table>
+	</div>
+
+   	{% else %}
+	<div class="row">
+		<span>Sorry, there are no products for your request</span>
+	</div>
+	{% endif %}     
+{% endblock %}

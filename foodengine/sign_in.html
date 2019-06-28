@@ -1,0 +1,23 @@
+{% extends "foodengine/base_layout.html" %}
+
+{% block app_title %} Sign In {% endblock %}
+
+{% block app_body_block %}
+	<p>Sign In</p>
+	{% if signin_message %}
+		<span style="font-weight:bold;">{{signin_message}}</span>
+	{% endif %}
+	
+	<form id="login_form" method="post">
+    	{% csrf_token %}
+        Username: <input type="text" name="username" value="" size="50" />
+        <br />
+        Password: <input type="password" name="password" value="" size="50" />
+        <br />
+        <input type="submit" value="submit" />
+    </form>
+	
+	<p>No Account?  
+		<a href="{% url 'signup' %}">Sign Up</a>
+	</p>
+{% endblock %}

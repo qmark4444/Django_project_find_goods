@@ -1,0 +1,20 @@
+{% extends "foodengine/base_layout.html" %}
+
+{% block app_title %} 
+	Home
+{% endblock %} 
+
+{% block app_content %}
+	<form id="search" method="get" action="{% url 'search' %}">
+		<div class="col-lg-8" style="margin-left: 200px;">
+			<img class="center-block" src="../static/images/logo.png" alt="Logo">
+    		<div class="input-group input-group-lg">
+      			<input type="text" class="form-control" placeholder="Type in product name here" name="product_name" value="{{ searchQuery.prodName|default_if_none:'' }}">
+      			<span class="input-group-btn">
+        			<button type="submit" class="btn btn-secondary">Search</button>
+      			</span>
+    		</div>
+  		</div>
+    </form> 
+
+{% endblock %}
