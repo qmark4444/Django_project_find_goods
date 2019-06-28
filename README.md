@@ -9,6 +9,7 @@ Has member privileges, can search and save the result.
 Has primary privileges, can see the products prices and save the search result.
 
 [System]
+
 Django version: 1.11.5
 Python version: 3.6.3
 MySQL version: 5.6
